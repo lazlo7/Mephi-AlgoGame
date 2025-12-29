@@ -22,19 +22,11 @@ public class SimulateBattleImpl implements SimulateBattle {
                 .sorted(Comparator.comparingInt(Unit::getBaseAttack).reversed())
                 .toList());
 
-        var playerUnitIterator = playerUnits.iterator();
-        var computerUnitIterator = computerUnits.iterator();
+        int currentPlayerUnitIdx = 0;
+        int currentComputerUnitIdx = 0;
         while (!playerUnits.isEmpty() && !computerUnits.isEmpty()) {
-            if (!playerUnitIterator.hasNext()) {
-                playerUnitIterator = playerUnits.iterator();
-            }
-
-            if (!computerUnitIterator.hasNext()) {
-                computerUnitIterator = computerUnits.iterator();
-            }
-
-            var playerUnit = playerUnitIterator.next();
-            var computerUnit = computerUnitIterator.next();
+            var playerUnit = playerUnits.get(currentPlayerUnitIdx);
+            var computerUnit = computerUnits.get(currentComputerUnitIdx);
 
             var attackedComputerUnit = playerUnit.getProgram().attack();
             if (attackedComputerUnit == null) {
@@ -42,7 +34,14 @@ public class SimulateBattleImpl implements SimulateBattle {
             }
             printBattleLog.printBattleLog(playerUnit, attackedComputerUnit);
             if (!attackedComputerUnit.isAlive()) {
+                var deadComputerUnitIdx = computerUnits.indexOf(attackedComputerUnit);
                 computerUnits.remove(attackedComputerUnit);
+                if (currentComputerUnitIdx > deadComputerUnitIdx) {
+                    currentComputerUnitIdx--;
+                }
+                if (computerUnits.isEmpty()) {
+                    break;
+                }
             }
 
             var attackedPlayerUnit = computerUnit.getProgram().attack();
@@ -51,8 +50,18 @@ public class SimulateBattleImpl implements SimulateBattle {
             }
             printBattleLog.printBattleLog(computerUnit, attackedPlayerUnit);
             if (!attackedPlayerUnit.isAlive()) {
+                var deadPlayerUnitIdx = playerUnits.indexOf(attackedPlayerUnit);
                 playerUnits.remove(attackedPlayerUnit);
+                if (currentPlayerUnitIdx > deadPlayerUnitIdx) {
+                    currentPlayerUnitIdx--;
+                }
+                if (playerUnits.isEmpty()) {
+                    break;
+                }
             }
+
+            currentPlayerUnitIdx = (currentPlayerUnitIdx + 1) % playerUnits.size();
+            currentComputerUnitIdx = (currentComputerUnitIdx + 1) % computerUnits.size();
         }
     }
 }

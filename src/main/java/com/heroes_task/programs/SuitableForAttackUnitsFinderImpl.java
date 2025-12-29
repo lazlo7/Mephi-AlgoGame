@@ -10,14 +10,14 @@ public class SuitableForAttackUnitsFinderImpl implements SuitableForAttackUnitsF
     private static final int BOARD_HEIGHT = 21;
 
     @Override
-    public List<Unit> getSuitableUnits(List<List<Unit>> unitsByRow, boolean isLeftArmyTarget) {
+    public List<Unit> getSuitableUnits(List<List<Unit>> unitsByColumns, boolean isLeftArmyTarget) {
         List<Unit> suitableUnits = new ArrayList<>();
         // Left army target -> computer is attacked -> check for top cell.
         if (isLeftArmyTarget) {
-            for (int y = 0; y < BOARD_HEIGHT; ++y) {
-                for (int x = 0; x < 3; ++x) {
-                    Unit unit = unitsByRow.get(y).get(x);
-                    if (unit != null && unit.isAlive() && (y == 0 || unitsByRow.get(y - 1).get(x) == null)) {
+            for (int x = 0; x < unitsByColumns.size(); ++x) {
+                for (var unit : unitsByColumns.get(x)) {
+                    var y = unit.getyCoordinate();
+                    if (unit.isAlive() && (y == 0 || isCellEmpty(unitsByColumns, x, y - 1))) {
                         suitableUnits.add(unit);
                     }
                 }
@@ -25,14 +25,23 @@ public class SuitableForAttackUnitsFinderImpl implements SuitableForAttackUnitsF
             return suitableUnits;
         }
         // Otherwise, right army target -> player is attacked -> check for bottom cell.
-        for (int y = 0; y < BOARD_HEIGHT; ++y) {
-            for (int x = 0; x < 3; ++x) {
-                Unit unit = unitsByRow.get(y).get(x);
-                if (unit != null && unit.isAlive() && (y == BOARD_HEIGHT - 1 || unitsByRow.get(y + 1).get(x) == null)) {
+        for (int x = 0; x < unitsByColumns.size(); ++x) {
+            for (var unit : unitsByColumns.get(x)) {
+                var y = unit.getyCoordinate();
+                if (unit.isAlive() && (y == BOARD_HEIGHT - 1 || isCellEmpty(unitsByColumns, x, y + 1))) {
                     suitableUnits.add(unit);
                 }
             }
         }
         return suitableUnits;
+    }
+
+    public boolean isCellEmpty(List<List<Unit>> units, int x, int y) {
+        for (var unit : units.get(x)) {
+            if (unit.getyCoordinate() == y && unit.isAlive()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
