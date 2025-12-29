@@ -17,7 +17,7 @@ public class SuitableForAttackUnitsFinderImpl implements SuitableForAttackUnitsF
             for (int y = 0; y < BOARD_HEIGHT; ++y) {
                 for (int x = 0; x < 3; ++x) {
                     Unit unit = unitsByRow.get(y).get(x);
-                    if (unit != null && y != 0 && unitsByRow.get(y - 1).get(x) == null) {
+                    if (unit != null && unit.isAlive() && (y == 0 || unitsByRow.get(y - 1).get(x) == null)) {
                         suitableUnits.add(unit);
                     }
                 }
@@ -28,7 +28,7 @@ public class SuitableForAttackUnitsFinderImpl implements SuitableForAttackUnitsF
         for (int y = 0; y < BOARD_HEIGHT; ++y) {
             for (int x = 0; x < 3; ++x) {
                 Unit unit = unitsByRow.get(y).get(x);
-                if (unit != null && y != BOARD_HEIGHT - 1 && unitsByRow.get(y + 1).get(x) == null) {
+                if (unit != null && unit.isAlive() && (y == BOARD_HEIGHT - 1 || unitsByRow.get(y + 1).get(x) == null)) {
                     suitableUnits.add(unit);
                 }
             }
