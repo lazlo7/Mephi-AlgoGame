@@ -9,6 +9,7 @@ public class SimulateBattleImpl implements SimulateBattle {
 
     @Override
     public void simulate(Army playerArmy, Army computerArmy) throws InterruptedException {
-        throw new RuntimeException("Hello from max motherfucker");
+        // nop.
+        System.out.println("Battle simulation [nop]");
     }
 }
